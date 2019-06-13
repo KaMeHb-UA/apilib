@@ -31,9 +31,7 @@ if(typeof fetch === 'function'){
         return protocolControllers[protocol(url)].then(pc => new Promise((resolve, reject) => {
             pc.get(url, resp => {
                 let data = '';
-                resp.on('data', chunk => {
-                    data += chunk;
-                });
+                resp.on('data', chunk => data += chunk);
                 resp.on('end', () => resolve(data));
             }).on('error', reject)
         }))
