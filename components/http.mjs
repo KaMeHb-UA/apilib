@@ -25,7 +25,8 @@ if(typeof fetch === 'function'){
                 case 's': return 'https';
                 case ':': return 'http';
             }
-        } else throw new TypeError('there is no supported protocol')
+        }
+        throw new TypeError('there is no supported protocol')
     }
     _get = url => {
         return protocolControllers[protocol(url)].then(pc => new Promise((resolve, reject) => {

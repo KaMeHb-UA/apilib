@@ -12,16 +12,11 @@ export default controller => {
     (async () => {
         const sio = await socket;
         const ctrlr = new (await controller)(sio);
-        sio.on('broadcast', (name, ...args) => {
+        sio.on('broadcast', async (name, ...args) => {
             if(ctrlr[name] && typeof ctrlr[name] === 'function'){
-                ctrlr[name](...args)
+                await ctrlr[name](...args)
             }
-        });
-        sio.on('client_update', (name, ...args) => {
-            if(ctrlr[name] && typeof ctrlr[name] === 'function'){
-                ctrlr[name](...args)
-            }
-        });
+        })
     })();
 
     return new Proxy({}, {
