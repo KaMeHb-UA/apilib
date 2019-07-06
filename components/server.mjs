@@ -1,33 +1,30 @@
 import socketIO from './socketIO.mjs'
 
-function uniqueFilter(value, index, self){ 
-    return self.indexOf(value) === index
-}
-
-function constructorFilter(value){
-    return value !== 'constructor'
-}
-
 export default controller => {
-    const io = socketIO.then(s => s());
-    let broadcastMethods;
+    let io = socketIO.then(s => s());
+
+    function method(name, ...args){
+        return new Promise(r => {
+            io.then(s => s.emit('broadcast', name, ...args));
+            r()
+        })
+    }
+
     io.then(io => io.on('connect', async socket => {
         const ctrlr = new (await controller)(socket);
-        const { broadcast } = ctrlr;
-        if(typeof broadcast !== 'object') throw new Error((await controller).name || 'Controller' + '.broadcast must be an object');
-        broadcastMethods = Object.getOwnPropertyNames(Object.getPrototypeOf(broadcast)).concat(Object.getOwnPropertyNames(broadcast)).filter(constructorFilter).filter(uniqueFilter);
         socket.on('method', async (name, ...args) => {
             const r = args.pop();
             if(ctrlr[name] && typeof ctrlr[name] === 'function'){
                 r(await ctrlr[name](...args))
             }
-        });
+        })
     }));
-    const res = {};
-    broadcastMethods.forEach(name => {
-        res[name] = (...data) => {
-            (await io).emit('broadcast', ...data)
-        }
-    });
-    return res
+
+    return new Proxy({}, {
+        get(t, p){
+            if(!t[p]) t[p] = method.bind(null, p);
+            return t[p]
+        },
+        set(t, p, v){ return false },
+    })
 }

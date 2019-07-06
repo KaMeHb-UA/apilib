@@ -5,7 +5,7 @@ export default controller => {
 
     function method(name, ...args){
         return new Promise(r => {
-            socket.emit('method', name, ...args, r)
+            socket.then(s => s.emit('method', name, ...args, r))
         })
     }
 
