@@ -1,5 +1,5 @@
 {
-    "name": "apilib",
+    "name": "@marlock/apilib",
     "version": "1.0.2",
     "main": "server.cjs",
     "module": "server.mjs",
