@@ -1,7 +1,7 @@
 import socketIO from './components/socketIO.mjs'
 
 export default (controller, uri) => {
-    let socket = socketIO.then(s => s(uri || ('wss://api.' + location.host), {
+    let socket = socketIO.then(s => s(uri || ('https://api.' + location.host), {
         transports: ['websocket'],
     }));
 
