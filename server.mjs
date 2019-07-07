@@ -1,6 +1,6 @@
 import socketIO from './components/socketIO-server.mjs'
 
-export default (controller, port = 3000) => {
+export default (controller, port = 443) => {
     let io = socketIO(port, {
         serveClient: false,
     });
