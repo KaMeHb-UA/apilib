@@ -1,4 +1,4 @@
-import socketIO from './socketIO.mjs'
+import socketIO from './components/socketIO.mjs'
 
 export default controller => {
     let socket = socketIO.then(s => s());

@@ -12,31 +12,6 @@ if(typeof fetch === 'function'){
             if (xhr.status != 200) reject(xhr.status + ': ' + xhr.statusText); else resolve(xhr.responseText)
         }
     })
-} else {
-    // Node.js?
-    const protocolControllers = {
-        http: import('http'),
-        https: import('https'),
-    };
-    const isLink = RegExp.prototype.test.bind(/^https?:\/\//);
-    const protocol = url => {
-        if(isLink(url)){
-            switch(url[4]){
-                case 's': return 'https';
-                case ':': return 'http';
-            }
-        }
-        throw new TypeError('there is no supported protocol')
-    }
-    _get = url => {
-        return protocolControllers[protocol(url)].then(pc => new Promise((resolve, reject) => {
-            pc.get(url, resp => {
-                let data = '';
-                resp.on('data', chunk => data += chunk);
-                resp.on('end', () => resolve(data));
-            }).on('error', reject)
-        }))
-    }
-}
+} else throw new Error('Cannot find any suitable http/https transport to download needed libs')
 
 export const get = _get

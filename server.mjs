@@ -1,16 +1,16 @@
-import socketIO from './socketIO.mjs'
+import socketIO from './components/socketIO-server.mjs'
 
 export default controller => {
-    let io = socketIO.then(s => s());
+    let io = socketIO();
 
     function method(name, ...args){
         return new Promise(r => {
-            io.then(s => s.emit('broadcast', name, ...args));
+            io.emit('broadcast', name, ...args);
             r()
         })
     }
 
-    io.then(io => io.on('connect', async socket => {
+    io.on('connect', async socket => {
         const ctrlr = new (await controller)(socket);
         socket.on('method', async (name, ...args) => {
             const r = args.pop();
@@ -18,7 +18,7 @@ export default controller => {
                 r(await ctrlr[name](...args))
             }
         })
-    }));
+    });
 
     return new Proxy({}, {
         get(t, p){

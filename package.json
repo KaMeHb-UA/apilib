@@ -1,5 +1,11 @@
 {
-    "scripts": {
-        "test": "node --experimental-modules test/server.mjs"
+    "name": "apilib",
+    "version": "1.0.2",
+    "main": "server.cjs",
+    "module": "server.mjs",
+    "dependencies": {
+        "esm": "^3.2.25",
+        "socket.io": "2.2.0",
+        "uWebSockets.js": "uNetworking/uWebSockets.js#v15.11.0"
     }
 }
