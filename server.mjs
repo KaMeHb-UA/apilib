@@ -1,7 +1,9 @@
 import socketIO from './components/socketIO-server.mjs'
 
-export default controller => {
-    let io = socketIO();
+export default (controller, port = 3000) => {
+    let io = socketIO(port, {
+        serveClient: false,
+    });
 
     function method(name, ...args){
         return new Promise(r => {

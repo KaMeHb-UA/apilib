@@ -1,7 +1,9 @@
 import socketIO from './components/socketIO.mjs'
 
-export default controller => {
-    let socket = socketIO.then(s => s());
+export default (controller, uri) => {
+    let socket = socketIO.then(s => s(uri || ('wss://api.' + location.host), {
+        transports: ['websocket'],
+    }));
 
     function method(name, ...args){
         return new Promise(r => {
