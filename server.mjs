@@ -1,4 +1,10 @@
 import socketIO from './components/socketIO-server.mjs'
+import errorTable from './components/errorTable.mjs'
+
+function errorParse(err){
+    let i = 0;
+    for(; i < errorTable.length; i++) if(err instanceof errorTable[i]) return i
+}
 
 export default (controller, port = 443) => {
     let io = socketIO(port, {
@@ -17,7 +23,18 @@ export default (controller, port = 443) => {
         socket.on('method', async (name, ...args) => {
             const r = args.pop();
             if(ctrlr[name] && typeof ctrlr[name] === 'function'){
-                r(await ctrlr[name](...args))
+                try{
+                    r({
+                        type: 'success',
+                        result: await ctrlr[name](...args),
+                    })
+                } catch(e){
+                    r({
+                        type: 'error',
+                        code: errorParse(e),
+                        message: e.message
+                    })
+                }
             }
         })
     });

@@ -1,14 +1,17 @@
 import socketIO from './components/socketIO.mjs'
+import errorTable from './components/errorTable.mjs'
 
 export default (controller, uri) => {
     let socket = socketIO.then(s => s(uri || ('https://api.' + location.host), {
         transports: ['websocket'],
     }));
 
-    function method(name, ...args){
-        return new Promise(r => {
+    async function method(name, ...args){
+        const res = await new Promise(r => {
             socket.then(s => s.emit('method', name, ...args, r))
-        })
+        });
+        if(res.type === 'error') throw new (errorTable[res.code])(res.message);
+        else return res.result
     }
 
     (async () => {
