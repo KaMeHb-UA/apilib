@@ -1,1 +1,2 @@
-./socketIO-server.d.ts
+import socketIO from 'socket.io'
+export default socketIO
